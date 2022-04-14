@@ -1,0 +1,188 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "客房服务助手"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/service/service",
+			"style": {
+				"navigationBarTitleText": "客房服务管家"
+			}
+		},
+		{
+			"path": "pages/mine/wallet",
+			"style": {
+				"navigationBarTitleText": "我的钱包"
+			}
+		},
+		{
+			"path": "pages/mine/walletRecord",
+			"style": {
+				"navigationBarTitleText": "记录"
+			}
+		},
+		{
+			"path": "pages/index/contactRecept",
+			"style": {
+				"navigationBarTitleText": "联系前台"
+			}
+		}
+	],
+	"subPackages": [{
+		"root": "uselessPages",
+		"pages": [{
+				"path": "pages/aboutUs",
+				"style": {
+					"navigationBarTitleText": "关于我们"
+				}
+			},
+			{
+				"path": "pages/agreement",
+				"style": {
+					"navigationBarTitleText": "用户协议"
+				}
+			},
+			{
+				"path": "pages/answer",
+				"style": {
+					"navigationBarTitleText": "常见问题"
+				}
+			},
+			{
+				"path": "pages/question",
+				"style": {
+					"navigationBarTitleText": "常见问题"
+				}
+			},
+			{
+				"path": "pages/feedback",
+				"style": {
+					"navigationBarTitleText": "问题反馈"
+				}
+			},
+			{
+				"path": "pages/chargeOrderList",
+				"style": {
+					"navigationBarTitleText": "充电订单",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/invoice",
+				"style": {
+					"navigationBarTitleText": "预约发票",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/roomClean",
+				"style": {
+					"navigationBarTitleText": "客房清扫",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/maintenance",
+				"style": {
+					"navigationBarTitleText": "物品维修",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/roomDelivery",
+				"style": {
+					"navigationBarTitleText": "客房送物",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/result",
+				"style": {
+					"navigationBarTitleText": "提交成功",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/market",
+				"style": {
+					"navigationBarTitleText": "在线点单",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/confirmOrder",
+				"style": {
+					"navigationBarTitleText": "确认订单",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/orderDetail",
+				"style": {
+					"navigationBarTitleText": "订单详情",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/onlineContinuation",
+				"style": {
+					"navigationBarTitleText": "在线续住",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/wakeUp",
+				"style": {
+					"navigationBarTitleText": "叫醒服务",
+					"enablePullDownRefresh": false
+				}
+			}
+		]
+	}],
+	"tabBar": {
+		"color": "#333",
+		"selectedColor": "#00a4ef",
+		"borderStyle": "black",
+		"backgroundColor": "#eee",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/image/index.png",
+				"selectedIconPath": "static/image/index_active.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"iconPath": "static/image/mine.png",
+				"selectedIconPath": "static/image/mine_active.png",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#00a4ef",
+		"backgroundColor": "#eee"
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+		}
+	}
+}
