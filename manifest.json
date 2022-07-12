@@ -1,5 +1,5 @@
 {
-    "name" : "edge-mini",
+    "name" : "hotel-mini",
     "appid" : "",
     "description" : "",
     "versionName" : "1.0.0",
@@ -50,12 +50,12 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wxc94004fbb5a4549e",
+        "appid" : "wx640db0216dc8de75",
         "setting" : {
             "urlCheck" : false,
             "es6" : true,
             "postcss" : true,
-            "minified" : true
+            "minified" : false
         },
         "usingComponents" : true
     },

@@ -25,6 +25,12 @@
 			}
 		},
 		{
+			"path": "pages/mine/serviceList",
+			"style": {
+				"navigationBarTitleText": "服务工单"
+			}
+		},
+		{
 			"path": "pages/mine/wallet",
 			"style": {
 				"navigationBarTitleText": "我的钱包"
@@ -73,6 +79,13 @@
 				"path": "pages/feedback",
 				"style": {
 					"navigationBarTitleText": "问题反馈"
+				}
+			},
+			{
+				"path": "pages/charge",
+				"style": {
+					"navigationBarTitleText": "充电",
+					"enablePullDownRefresh": false
 				}
 			},
 			{
@@ -128,6 +141,13 @@
 				"path": "pages/confirmOrder",
 				"style": {
 					"navigationBarTitleText": "确认订单",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/orderList",
+				"style": {
+					"navigationBarTitleText": "订单列表",
 					"enablePullDownRefresh": false
 				}
 			},
