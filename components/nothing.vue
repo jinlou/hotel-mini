@@ -4,6 +4,7 @@
 		<img v-else src="@/static/image/net_error.png" />
 		<p class="title">{{word}}</p>
 		<button v-if="error" round custom-class="refrsh-btn" @click="refresh">刷新</button>
+		<slot></slot>
 	</div>
 </template>
 
@@ -57,9 +58,9 @@
 		align-items: center;
 
 		img {
-			width: 182rpx;
-			height: 120rpx;
-			margin: 0 auto 18rpx;
+			width: 440rpx;
+			height: 468rpx;
+			margin: 0 auto 28rpx;
 		}
 
 		.title {
@@ -68,7 +69,7 @@
 			text-align: center;
 		}
 	}
-	
+
 	/deep/ .refrsh-btn {
 		background-color: #00a4ef;
 		width: 180rpx;

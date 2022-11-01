@@ -7,27 +7,61 @@
 			</view>
 			<text @click="login">{{userInfo.nickname || '去登录'}}</text>
 		</view>
-		<view class="wallet">
-			<view>
-				<text @click="alert">余额</text>
-				<text class="money">{{money}}</text>
+		
+		<!-- <view class="mine">
+			<view class="orders">
+				<view class="order" v-for="(item, index) in orders" :key="index" @click="goTo(item)">
+					<view class="one">
+						<image :src="item.bg" mode=""></image>
+						<view>{{item.text}}</view>
+					</view>
+					<uni-icons type="right" color="#666" size="22" ></uni-icons>
+				</view>
 			</view>
-			<view class="myWallet" @click="goTo('wallet')">
-				我的钱包
+			<view class="center">
+				
+			</view>
+			<view class="orders">
+				<view class="order" v-for="(item, index) in novel" :key="index" @click="goTo(item)">
+					<view class="one">
+						<image :src="item.bg" mode=""></image>
+						<view>{{item.text}}</view>
+					</view>
+					<uni-icons type="right" color="#666" size="22" ></uni-icons>
+				</view>
 			</view>
 		</view>
+		 -->
 		<view class="mine">
 			<view class="orders">
 				<view class="order" v-for="(item, index) in orders" :key="index" @click="goTo(item)">
-					<image :src="item.bg" mode=""></image>
-					<view>{{item.text}}</view>
+					<view class="one">
+						<image :src="item.bg" mode=""></image>
+						<view>{{item.text}}</view>
+					</view>
+					<uni-icons type="right" color="#666" size="22" ></uni-icons>
 				</view>
 			</view>
-			<view class="line"></view>
-			<view class="others">
-				<view class="other" v-for="(item, index) in others" :key="index" @click="goTo(item)">
-					<image :src="item.bg" mode=""></image>
-					<view>{{item.text}}</view>
+			<view class="center">
+			</view>
+			<view class="orders">
+				<view class="order" v-for="(item, index) in novel" :key="index" @click="goTo(item)">
+					<view class="one">
+						<image :src="item.bg" mode=""></image>
+						<view>{{item.text}}</view>
+					</view>
+					<uni-icons type="right" color="#666" size="22" ></uni-icons>
+				</view>
+			</view>
+			<view class="center">
+			</view>
+			<view class="orders">
+				<view class="order" v-for="(item, index) in others" :key="index" @click="goTo(item)">
+					<view class="one">
+						<image :src="item.bg" mode=""></image>
+						<view>{{item.text}}</view>
+					</view>
+					<uni-icons type="right" color="#666" size="22" ></uni-icons>
 				</view>
 			</view>
 		</view>
@@ -36,7 +70,7 @@
 </template>
 
 <script>
-	import Auth from '@/components/auth.vue'
+	import Auth from '@/components/authNew.vue'
 	import {
 		baseURL
 	} from 'api/axios'
@@ -50,28 +84,45 @@
 					avatarUrl: ''
 				},
 				money: 0,
-				orders: [{
+				orders: [
+					{
 						text: '充电订单',
-						bg: require('@/static/image/charge.png'),
+						bg: require('@/static/image/order.png'),
 						url: 'chargeOrderList',
 						defaultPage: 'chargeOrderList'
 					},
+				
+					{
+						text: '购物订单',
+						bg: require('@/static/image/car.png'),
+						url: '',
+						defaultPage: 'orderList'
+					},
 					{
 						text: '服务工单',
-						bg: require('@/static//image/order_serve.png'),
+						bg: require('@/static/image/user1.png'),
 						url: '',
 						Page: '/pages/mine/serviceList'
 					},
+				],
+				novel: [
 					{
-						text: '购物订单',
-						bg: require('@/static/image/shop_order.png'),
-						url: '',
-						defaultPage: 'orderList'
+						text: '我的书架',
+						bg: require('@/static/image/order.png'),
+						Page: '/pages/service/store',
+						defaultPage: ''
+					},
+				
+					{
+						text: '小说续费',
+						bg: require('@/static/image/car.png'),
+						Page: '/pages/service/novelVIP',
+						defaultPage: ''
 					},
 				],
 				others: [{
 						text: '常见问题',
-						bg: require('@/static//image/question.png'),
+						bg: require('@/static/image/question1.png'),
 						appID: '',
 						defaultPage: 'question'
 					},
@@ -83,13 +134,13 @@
 					// },
 					{
 						text: '用户协议',
-						bg: require('@/static/image/agreement.png'),
+						bg: require('@/static/image/rule.png'),
 						appID: '',
-						defaultPage: 'agreement'
+						defaultPage: 'novelAgreement'
 					},
 					{
 						text: '关于我们',
-						bg: require('@/static/image/about_us.png'),
+						bg: require('@/static/image/aboutus.png'),
 						appID: '',
 						defaultPage: 'aboutUs'
 					},
@@ -212,7 +263,7 @@
 
 
 	.user-info {
-		height: 50px;
+		height: 70px;
 		display: flex;
 		align-items: center;
 		color: #fff;
@@ -266,29 +317,46 @@
 	}
 
 	.mine {
-		height: calc(100% - 100px);
+		height: calc(100% - 70px);
 		border-top-left-radius: 10px;
 		border-top-right-radius: 10px;
 		background: #fff;
+	}
+	
+	.center{
+		height: 15rpx;
+		background: #eee;
 	}
 
 	.orders {
 		display: flex;
 		justify-content: space-between;
-		height: 90px;
 		color: #333;
 		align-items: center;
 		background: #fff;
+		flex-direction: column;
 		box-sizing: border-box;
+		padding: 0 30rpx;
 
 		.order {
-			width: 33%;
 			text-align: center;
+			display: flex;
+			align-items: center;
+			height: 90rpx;
+			width: calc(100% - 15rpx);
+			justify-content: space-between;
+			border-bottom: 1rpx solid #ebedf2;
+			
+			.one {
+				height: 100%;
+				display: flex;
+				align-items: center;
+			}
 
 			image {
-				width: 40px;
-				height: 40px;
-				border-radius: 50%;
+				width: 30px;
+				height: 30px;
+				margin-right: 20rpx;
 			}
 
 			view {

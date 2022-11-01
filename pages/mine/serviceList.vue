@@ -10,11 +10,11 @@
 				<view class="oneOrder">
 					<view class="status">
 						<view class="left">
-							<image src="@/static/logo.png" mode=""></image>
-							<text>{{item.hotelBranch.name || '客房助手管家'}}</text>
+							<image src="@/static/image/order_icon.png" mode=""></image>
+							<text>{{item.serviceType}}</text>
 						</view>
-						<view class="right" :class="[items.status != 1 ? 'active' : '']">
-							{{item.status | statusFilter}}
+						<view class="right" :class="['active' + item.processingStatus]">
+							{{item.processingStatus | statusFilter}}
 						</view>
 					</view>
 					<view class="content">
@@ -46,8 +46,8 @@
 					</view>
 				</view>
 			</view>
-			<uni-load-more :status="status"></uni-load-more>
-			<Nothing v-if="!orderList.length" style="margin-top: 90rpx;"></Nothing>
+			<Nothing v-if="!orderList.length" style="margin-top: 156rpx;" title="近期暂无服务工单"></Nothing>
+			<uni-load-more v-if="orderList.length || status == 'loading'" :status="status"></uni-load-more>
 		</view>
 	</view>
 </template>
@@ -92,7 +92,7 @@
 				if(status == 1) {
 					return '已完成'
 				} else{ 
-					return '已取消'
+					return '待处理'
 				}
 			}
 		},
@@ -187,8 +187,8 @@
 			width: 21%;
 			margin: 0 2%;
 			color: #333;
-			font-size: 26rpx;
-			background: #fff;
+			font-size: 30rpx;
+			background: #e4f3ff;
 			text-align: center;
 			height: 56rpx;
 			line-height: 56rpx;
@@ -208,6 +208,7 @@
 			background: #fff;
 			border-radius: 12rpx;
 			margin-bottom: 16rpx;
+			box-shadow: 0px 3px 3px 1px rgba(0,0,0,0.05);
 			
 			.status {
 				display: flex;
@@ -217,14 +218,18 @@
 				padding: 0 20rpx;
 				
 				.left {
+					display: flex;
+					justify-content: space-between;
+					height: 80rpx;
+					align-items: center;
 					image {
-						width: 30rpx;
-						height: 30rpx;
+						width: 48rpx;
+						height: 48rpx;
 					}
 					
 					text {
-						margin-left: 10rpx;
-						font-size: 32rpx;
+						margin-left: 4rpx;
+						font-size: 28rpx;
 					}
 				}
 				
@@ -234,8 +239,13 @@
 					background: #ebedf2;
 					padding: 6rpx 16rpx;
 					
-					&.active {
-						background:$uni-color-primary;
+					&.active0 {
+						background: rgba(0,128,255,.2);
+						color: #007df8;
+					}
+					
+					&.active1 {
+						background: #E4E4E4;
 						color: #fff;
 					}
 				}
@@ -254,6 +264,7 @@
 						width: 170rpx;
 						flex-grow: 0;
 						flex-shrink: 0;
+						padding-left: 14rpx;
 					}
 				}
 			}

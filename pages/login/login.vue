@@ -1,12 +1,12 @@
 <template>
 	<view class="page">
-		<image src="@/static/logo.png" class="logo" mode=""></image>
+		<image src="@/static/image/logo.png" class="logo" mode=""></image>
 		<button class="btn" type="primary" @click="login">登录</button>
-		<Auth ref="auth"></Auth>
+		<AuthNew ref="auth"></AuthNew>
 	</view>
 </template>
 <script>
-	import Auth from '@/components/auth.vue'
+	import AuthNew from '@/components/authNew.vue'
 	let globalData = getApp().globalData
 	export default {
 		data() {
@@ -18,11 +18,17 @@
 			console.log(3)
 			console.log(globalData)
 			console.log(this.$api)
+			uni.setStorageSync('userInfo', null)
+			// uni.setStorageSync('roomInfo', null)
+			uni.setStorageSync('token', '')
+			uni.setStorageSync('ss', '')
+			uni.setStorageSync('novelInfo', {})
 		},
 		components: {
-			Auth
+			AuthNew
 		},
 		mounted() {
+			
 			console.log(1)
 			// console.log(globalData)
 			uni.$once('registerSuccess', info => {
@@ -68,6 +74,8 @@
 									uni.setStorageSync('userInfo', res.data.userInfo)
 									uni.setStorageSync('token', res.data.token)
 									uni.setStorageSync('ss', res.data.ss)
+									uni.setStorageSync('novelInfo', res.data.novelVip || {})
+									
 									uni.navigateBack({
 										fail() {
 											uni.navigateTo({
@@ -110,5 +118,8 @@
 
 	.btn {
 		width: 80%;
+		background: #007CF8;
+		border-radius: 30px 30px 30px 30px;
+		opacity: 1;
 	}
 </style>

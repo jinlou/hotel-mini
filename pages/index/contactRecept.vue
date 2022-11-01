@@ -1,37 +1,63 @@
 <template>
 	<!-- <view class="content" style="background-image: url('/static/image/logo.png')"> -->
 	<view class="content">
-		<image class="bg" src="/static/image/logo.png" mode=""></image>
+		<image class="bg" src="/static/image/bg5.jpg" mode=""></image>
 		<view class="outer">
-			<view class="top">
-				<text>前台电话</text>
-				<view class="phone">
-					<uni-icons type="phone"></uni-icons>
+			<!-- <view class="top">
+				<text>联系前台</text>
+				<view class="phone" v-if="phone">
+					<uni-icons type="phone" color="#fff"></uni-icons>
 					<text @click="call">{{phone}}</text>
 				</view>
-			</view>
+			</view> -->
 			<Room></Room>
+			
+			<view class="question" style="margin-bottom: 20rpx;">
+				<view class="top">
+					<view class="title">
+						<view class="line"></view>
+						<text>联系前台</text>
+						<text class="txt">点击下方电话联系前台</text>
+					</view>
+					<!-- <view class="refresh" @click="refresh">
+						<image src="@/static/image/refresh.png" mode=""></image>
+						<text>换一批</text>
+					</view> -->
+				</view>
+			
+				<view class="questionList">
+					<view class="one" v-for="(item,index) in phone" :key="index"  @click="call(item.content)">
+						<view class="left">
+							{{item.content}}
+						</view>
+						<uni-icons type="phone" color="#999" size="21"></uni-icons>
+					</view>
+				</view>
+			</view>
+			
 			<view class="question">
 				<view class="top">
 					<view class="title">
 						<view class="line"></view>
 						<text>猜你所问</text>
 					</view>
-					<view class="refresh" @click="refresh">
+					<!-- <view class="refresh" @click="refresh">
 						<image src="@/static/image/refresh.png" mode=""></image>
 						<text>换一批</text>
-					</view>
+					</view> -->
 				</view>
 
 				<view class="questionList">
-					<view class="one" v-for="(item,index) in questionList" :key="index">
+					<view class="one" v-for="(item,index) in questionList" :key="index"  @click="goTo(item)">
 						<view class="left">
-							{{index + 1}}: {{item.question}}
+							{{index + 1}}: {{item.title}}
 						</view>
 						<uni-icons type="right" color="#999"></uni-icons>
 					</view>
 				</view>
 			</view>
+			
+			
 			
 			<view class="needs">
 				<view class="top">
@@ -46,9 +72,9 @@
 					<view class="one" v-for="(item,index) in needsList" :key="index">
 						<view class="left">{{item.name}}</view>
 						<view class="right">
-							<uni-icons type="minus" size="20" @click="minus(item)" :color="item.value == 0 ? '#999' : '#00a4ef'"></uni-icons>
-							<text>{{item.value}}</text>
-							<uni-icons type="plus" size="20" @click="plus(item)" :color="item.value == 9 ? '#999' : '#00a4ef'"></uni-icons>
+							<uni-icons type="minus" size="28" @click="minus(item)" :color="item.number == 0 ? '#999' : '#00a4ef'"></uni-icons>
+							<view>{{item.number}}</view>
+							<uni-icons type="plus" size="28" @click="plus(item)" :color="item.number == 9 ? '#999' : '#00a4ef'"></uni-icons>
 						</view>
 						<!-- <uni-number-box v-model="item.value" :min="0" :max="9"></uni-number-box> -->
 					</view>
@@ -71,131 +97,134 @@
 				questionList: [],
 				needsList: [],
 				others: '',
-				phone: '',
+				phone: [],
+			}
+		},
+		computed: {
+			choosedList() {
+				let arr = []
+				this.needsList.forEach(v => {
+					if(v.number) {
+						arr.push({
+							name: v.name,
+							number: v.number
+						})
+					}
+				})
+				return arr
 			}
 		},
 		components: {
 			Room
 		},
 		onLoad() {},
-		mounted() {
+		onShow() {
 			this.getQuestion()
 			this.getNeeds()
-			this.phone = uni.getStorageSync('roomInfo').conplaintPhone.content
+			if(uni.getStorageSync('roomInfo')) {
+				console.log(uni.getStorageSync('roomInfo'))
+				console.log(typeof uni.getStorageSync('roomInfo'))
+				this.phone = uni.getStorageSync('roomInfo').complaintPhones
+			}
+		},
+		mounted() {
+			// this.phone = uni.getStorageSync('roomInfo').conplaintPhone ? uni.getStorageSync('roomInfo').content : ''
 		},
 		methods: {
-			call() {
-				let _this = this
+			call(phone) {
 				wx.makePhoneCall({
-					phoneNumber: _this.phone //仅为示例，并非真实的电话号码
+					phoneNumber: phone //仅为示例，并非真实的电话号码
 				})
 			},
 			refresh() {
 
 			},
 			getQuestion() {
-				this.questionList = [{
-						id: 1,
-						question: '酒店有免费停车场吗？'
-					},
-					{
-						id: 2,
-						question: '酒店是否有餐厅？'
-					},
-					{
-						id: 3,
-						question: '附近有什么购物中心？'
-					},
-					{
-						id: 4,
-						question: '酒店早餐是什么类型？'
-					},
-					{
-						id: 5,
-						question: '早餐几点供应？'
-					},
-					{
-						id: 6,
-						question: '酒店附近有什么景点？'
-					}
-				]
+				this.$api.QandA({
+					hotelBranchId: uni.getStorageSync('roomInfo').hotelBranchId,
+				}).then(res => {
+					console.log(res)
+					this.questionList = res.data
+				}).catch(() => {
+					console.log('err')
+				})
+			},
+			goTo(item) {
+				console.log(item)
+				uni.navigateTo({
+					url: '/uselessPages/pages/answer?id=' + item.articleId,
+				})
 			},
 			getNeeds() {
-				this.needsList = [
-					{
-						id: 1,
-						name: '被子'
-					},
-					{
-						id: 2,
-						name: '枕头'
-					},
-					{
-						id: 3,
-						name: '拖鞋'
-					},
-					{
-						id: 4,
-						name: '卷纸'
-					},
-					{
-						id: 5,
-						name: '洗发水'
-					},
-					{
-						id: 6,
-						name: '牙具'
-					},
-					{
-						id: 7,
-						name: '香皂'
-					},
-					{
-						id: 8,
-						name: '毛巾'
-					},
-					{
-						id: 9,
-						name: '矿泉水'
-					},
-					{
-						id: 10,
-						name: '电吹风'
-					},
-					{
-						id: 11,
-						name: '漱口水'
-					},
-					{
-						id: 12,
-						name: '梳子'
-					},
-				]
-				
-				this.needsList.forEach(v => {
-					v.value = 0
+				this.$api.roomItems().then(res => {
+					console.log(res)
+					this.needsList = res.data
+					this.needsList.forEach(v => {
+						v.number = 0
+					})
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg || '网络错误'
+					})
 				})
 			},
 			minus(item) {
-				if(!item.value) return
-				this.needsList.forEach(v => {
+				if(!item.number) return
+				this.needsList.forEach((v, i) => {
 					if(v.id == item.id) {
-						v.value--
+						v.number--
+						this.$set(this.needsList, i, v)
 					}
 				})
 			},
 			plus(item) {
-				if(item.value == 9) return
+				if(item.number == 9) return
 				this.needsList.forEach((v, i) => {
 					if(v.id == item.id) {
-						v.value++
-						
+						v.number++
 						this.$set(this.needsList, i, v)
 					}
 				})
 				console.log(this.needsList)
-				this.needsList
-			}
+			},
+			submit() {
+				console.log(this.choosedList)
+				if(!this.choosedList.length) {
+					uni.showToast({
+						icon: 'none',
+						title: '请选择物品'
+					})
+				} else {
+					this.$api.roomSendItems({
+						hotelRoomId: uni.getStorageSync('roomInfo').roomId,
+						contactNumber: uni.getStorageSync('userInfo').phone,
+						items: JSON.stringify(this.choosedList),
+						remark: this.content,
+					}).then(res => {
+						if(res.code == 0) {
+							uni.showToast({
+								icon: 'none',
+								title: '服务已提交，请稍后…'
+							})
+							wx.requestSubscribeMessage({
+								tmplIds: this.$serviceIDs,
+								success (res) { 
+									console.log(res)
+								},
+								complete() {
+									uni.navigateBack()
+								}
+							})
+						}
+					}).catch(err => {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg
+						})
+					})
+				}
+			},
 		}
 	}
 </script>
@@ -222,7 +251,9 @@
 		top: 0;
 		width: 100%;
 		z-index: 2;
-		padding: 0 30rpx;
+		padding: 20rpx 30rpx;
+		
+		background: #eee;
 	}
 
 	.top {
@@ -265,6 +296,12 @@
 					color: #333;
 					font-size: 26rpx;
 					font-weight: 600;
+				}
+				
+				.txt {
+					color: #999;
+					font-size: 18rpx;
+					margin-left: 10rpx;
 				}
 			}
 
@@ -333,6 +370,7 @@
 				.txt {
 					color: #999;
 					font-size: 18rpx;
+					margin-left: 10rpx;
 				}
 			}
 		}
@@ -373,7 +411,7 @@
 	.info {
 		margin-top: 15px;
 		background: #eee;
-		padding: 6px;
+		margin: 6px;
 		height: 80px;
 		width: 100%;
 	}

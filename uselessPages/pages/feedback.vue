@@ -14,17 +14,18 @@
 			<text>*</text>注：请先去订单列表复制订单号
 		</view> -->
 		<view class="type">
-			<view>请选择问题类型</view>
+			<view class="txt">投诉类型</view>
 			<view class="type-list">
 				<view class="one" v-for="(item, index) in typeList" :key="index" @click="chooseType(item)"
 					:class="[item.id == type ? 'active' : '']">
 					{{item.name}}
 				</view>
 			</view>
-			<textarea class="info" v-model.trim="content" placeholder="输入问题内容(必填)" />
 		</view>
 		<view class="imgs">
-			<view>上传照片（帮助我们快速为您解决问题）</view>
+			<view class="txt">备注信息</view>
+			<textarea class="info" v-model.trim="content" placeholder="输入问题内容" />
+			<view class="txt">投诉图片 <text>最多上传四张(最多10M)</text></view>
 			<view class="img-list">
 				<view class="one" v-for="(item, index) in imgsList" :key="index" @click="chooseType(item)">
 					<!-- <image :src="item" mode="aspectFill"></image> -->
@@ -33,19 +34,17 @@
 					<uni-icons @click="deleteOne(index)" class="delete" type="closeempty" color="#fff"></uni-icons>
 				</view>
 				<view v-if="imgsList.length < 4" class="upload">
-					<!-- <image @click="chooseImage" src="/static/logo.png" size="24" mode=""></image> -->
+					<!-- <image @click="chooseImage" src="/static/image/upload.png" mode=""  class="bg"></image> -->
 					<view @click="chooseImage" class="bg"></view>
 				</view>
 			</view>
-		</view>
-		<view class="mark">
-			<text>*</text>照片大小不能超过10M（最多四张）
 		</view>
 		<button type="primary" @click="bathImage" class="submit">提交</button>
 	</view>
 </template>
 
 <script>
+	import {baseURL} from '@/api/baseURL.js'
 	import Room from '@/components/room.vue'
 	export default {
 		data() {
@@ -144,20 +143,20 @@
 				})
 			},
 			bathImage() {
-				if (!this.content.trim()) {
-					uni.showToast({
-						icon: 'none',
-						title: '请描述问题'
-					})
-					return
-				}
+				// if (!this.content.trim()) {
+				// 	uni.showToast({
+				// 		icon: 'none',
+				// 		title: '请描述问题'
+				// 	})
+				// 	return
+				// }
 
 				let _this = this,
 					promiseArr = []
 				for (let i = 0; i < this.imgsList.length; i++) {
 					let promise = new Promise((resolve, reject) => {
 						wx.uploadFile({
-							url: 'https://dev.qyqycp.com/upload/file/image',
+							url: baseURL + '/upload/file/image',
 							filePath: _this.imgsList[i],
 							name: 'image',
 							success(res) {
@@ -185,26 +184,30 @@
 					})
 				})
 			},
-			submit(res) {
+			submit(images) {
+				console.log(images)
+				console.log(typeof images)
 				this.$api.postComplain({
 					hotelRoomId: uni.getStorageSync('roomInfo').roomId,
 					contactNumber: uni.getStorageSync('userInfo').phone,
 					content: this.content,
 					type: this.type,
-					images: res,
+					images: images,
 				}).then(res => {
 					if (res.code == 0) {
-						uni.showToast({
-							icon: 'none',
-							title: '服务已提交，请稍后…'
-						})
+						
 						wx.requestSubscribeMessage({
 							tmplIds: this.$serviceIDs,
 							success(res) {
 								console.log(res)
 							},
 							complete() {
-								uni.navigateBack()
+								console.log('company')
+								uni.showToast({
+									icon: 'none',
+									title: '服务已提交，请稍后…'
+								})
+								setTimeout(() =>uni.navigateBack(), 1500)
 							}
 						})
 					}
@@ -276,11 +279,23 @@
 			color: $uni-error-text;
 		}
 	}
+	
+	.txt {
+		height: 60rpx;
+		line-height: 60rpx;
+		
+		text {
+			font-size: 22rpx;
+			color: #999;
+		}
+	}
 
 	.type {
-		padding: 6px 8px;
+		padding: 6px 8px 15px;
 		background: #fff;
 		border-radius: 6px;
+		box-shadow: 0px 2px 3px 1px rgba(0,0,0,0.1);
+		border-radius: 10rpx;
 
 		.type-list {
 			display: flex;
@@ -296,6 +311,7 @@
 				text-align: center;
 				margin-top: 10px;
 				border-radius: 8rpx;
+				border-radius: 10rpx;
 
 				&.active {
 					background: $uni-defualt-text;
@@ -304,27 +320,31 @@
 			}
 		}
 
-		.info {
-			margin-top: 15px;
-			border-radius: 10rpx;
-			box-sizing: border-box;
-			background: #eee;
-			padding: 6px;
-			height: 80px;
-			width: 100%;
-		}
+		
 	}
 
 	.imgs {
 		margin-top: 16px;
 		background: #fff;
-		border-radius: 6px;
-		padding: 6px;
+		padding: 6px 6px 15px;
+		box-shadow: 0px 2px 3px 1px rgba(0,0,0,0.1);
+		border-radius: 10rpx;
+		
+		.info {
+			border-radius: 10rpx;
+			box-sizing: border-box;
+			background: #eee;
+			padding: 6px;
+			height: 80px;
+			width: calc(100% - 30rpx);
+			margin: 0 auto 16rpx;
+		}
 
 		.img-list {
 			display: flex;
 			flex-wrap: wrap;
 			margin-top: 10px;
+			margin: 0 15rpx;
 
 			.one {
 				width: 23%;
@@ -345,7 +365,7 @@
 				}
 			}
 
-
+			
 		}
 
 		.upload {
@@ -355,7 +375,7 @@
 				width: 100%;
 				height: 0;
 				padding-bottom: 100%;
-				background: url('/static/logo.png') no-repeat 100% 100%;
+				background: url('/static/image/upload.png') no-repeat 100% 100%;
 				background-size: 100% 100%;
 			}
 		}
@@ -363,7 +383,9 @@
 	}
 
 	.submit {
-		margin: 10px 0 30px;
+		position: fixed;
+		bottom: 100rpx;
+		width: calc(100% - 60rpx);
 		background: $uni-color-primary;
 	}
 </style>

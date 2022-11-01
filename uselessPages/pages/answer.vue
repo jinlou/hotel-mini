@@ -1,8 +1,8 @@
 <template>
 	<view class="content">
-		<view class="question">{{detail.question}}</view>
-		<view class="date">{{detail.date}}</view>
-		<view class="answer">{{detail.answer}}</view>
+		<view class="question">{{detail.title}}</view>
+		<view class="date">{{detail.addTime}}</view>
+		<view class="answer">{{detail.content}}</view>
 	</view>
 </template>
 
@@ -11,10 +11,9 @@
 		data() {
 			return {
 				detail: {
-					question: '1、付完款设备不正常启动怎么办？',
-					date: '2020-01-01',
-					id: 2,
-					answer: '你问我我怎么知道，自己百度去！你问我我怎么知道，自己百度去！你问我我怎么知道，自己百度去！你问我我怎么知道，自己百度去！你问我我怎么知道，自己百度去！'
+					title: '',
+					addTime: '',
+					content: ''
 				},
 			}
 		},

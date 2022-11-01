@@ -7,6 +7,12 @@
 			}
 		},
 		{
+			"path": "pages/index/ad",
+			"style": {
+				"navigationBarTitleText": "ad"
+			}
+		},
+		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "登录"
@@ -47,11 +53,102 @@
 			"style": {
 				"navigationBarTitleText": "联系前台"
 			}
+		},
+		
+		{
+			"path": "pages/service/charge",
+			"style": {
+				"navigationBarTitleText": "充电",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/market",
+			"style": {
+				"navigationBarTitleText": "酒店超市",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/invoice",
+			"style": {
+				"navigationBarTitleText": "预约发票",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/novel",
+			"style": {
+				"navigationBarTitleText": "小说",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/novelList",
+			"style": {
+				"navigationBarTitleText": "搜索",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/novelType",
+			"style": {
+				"navigationBarTitleText": "分类",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/novelDesc",
+			"style": {
+				"navigationBarTitleText": "小说详情",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/service/store",
+			"style": {
+				"navigationBarTitleText": "书架",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/novelVIP",
+			"style": {
+				"navigationBarTitleText": "会员",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/service/serviceHp",
+			"style": {
+				"navigationBarTitleText": "好评有礼",
+				"enablePullDownRefresh": false,
+				"mp-weixin": {
+					// "usingComponents": true,
+					// "plugins": {
+					// 	 "contactPlugin": {
+					// 	 	"version": "1.4.5",
+					// 	 	"provider": "wx104a1a20c3f81ec2"
+					// 	 }
+					// }
+				
+					"usingComponents": {
+						"cell": "plugin://contactPlugin/cell"
+					}
+				}
+			}
 		}
 	],
 	"subPackages": [{
 		"root": "uselessPages",
-		"pages": [{
+		"pages": [
+			{
+				"path": "pages/wifi",
+				"style": {
+					"navigationBarTitleText": "wifi"
+				}
+			},
+			{
 				"path": "pages/aboutUs",
 				"style": {
 					"navigationBarTitleText": "关于我们"
@@ -82,23 +179,9 @@
 				}
 			},
 			{
-				"path": "pages/charge",
-				"style": {
-					"navigationBarTitleText": "充电",
-					"enablePullDownRefresh": false
-				}
-			},
-			{
 				"path": "pages/chargeOrderList",
 				"style": {
 					"navigationBarTitleText": "充电订单",
-					"enablePullDownRefresh": false
-				}
-			},
-			{
-				"path": "pages/invoice",
-				"style": {
-					"navigationBarTitleText": "预约发票",
 					"enablePullDownRefresh": false
 				}
 			},
@@ -127,13 +210,6 @@
 				"path": "pages/result",
 				"style": {
 					"navigationBarTitleText": "提交成功",
-					"enablePullDownRefresh": false
-				}
-			},
-			{
-				"path": "pages/market",
-				"style": {
-					"navigationBarTitleText": "在线点单",
 					"enablePullDownRefresh": false
 				}
 			},
@@ -171,27 +247,47 @@
 					"navigationBarTitleText": "叫醒服务",
 					"enablePullDownRefresh": false
 				}
+			},
+			{
+				"path": "pages/blueTooth",
+				"style": {
+					"navigationBarTitleText": "蓝牙",
+					"enablePullDownRefresh": false
+				}
+			},
+			{
+				"path": "pages/novelAgreement",
+				"style": {
+					"navigationBarTitleText": "用户服务协议",
+					"enablePullDownRefresh": false
+				}
 			}
 		]
 	}],
 	"tabBar": {
 		"color": "#333",
 		"selectedColor": "#00a4ef",
-		"borderStyle": "black",
-		"backgroundColor": "#eee",
+		"borderStyle": "white",
+		"backgroundColor": "#D6F1FF",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"iconPath": "static/image/index.png",
-				"selectedIconPath": "static/image/index_active.png",
+				"iconPath": "static/image/tabbar/index.png",
+				"selectedIconPath": "static/image/tabbar/index_active.png",
 				"text": "首页"
 			},
 			{
 				"pagePath": "pages/mine/mine",
-				"iconPath": "static/image/mine.png",
-				"selectedIconPath": "static/image/mine_active.png",
+				"iconPath": "static/image/tabbar/mine.png",
+				"selectedIconPath": "static/image/tabbar/mine_active.png",
 				"text": "我的"
 			}
 		]
+	},
+	"plugins": {
+		"contactPlugin": {
+			"version": "1.4.5",
+			"provider": "wx104a1a20c3f81ec2"
+		}
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

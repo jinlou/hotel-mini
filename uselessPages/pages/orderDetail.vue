@@ -145,7 +145,7 @@
 			cancelOrder() {
 				this.$api.cancelOrder({
 					orderId: this.orderDetail.orderId,
-					orderSn: item.orderSn,
+					orderSn: this.orderDetail.orderSn,
 				}).then(res => {
 					if(res.code == 0) {
 						uni.showToast({

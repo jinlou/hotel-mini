@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<view class="noData" v-if="!lists.length">
-			<image class="logo" src="/static/logo.png"></image>
+			<image class="logo" src="/static/image/logo.png"></image>
 			<view>暂无数据</view>
 		</view>
 	</view>

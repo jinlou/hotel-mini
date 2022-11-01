@@ -7,7 +7,7 @@
 		<view class="lists">
 			<view class="wallet-list" v-for="(item, index) in lists" :key="index" @click="goTo(item)">
 				<view class="one">
-					<image class="logo" src="/static/logo.png"></image>
+					<image class="logo" src="/static/image/logo.png"></image>
 					<view class="right">
 						<text>{{item.text}}</text>
 						<uni-icons type="right" size="14"></uni-icons>

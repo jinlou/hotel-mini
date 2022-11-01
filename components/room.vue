@@ -1,10 +1,10 @@
 <template>
 	<view class="location">
 		<view class="name">
-			<image src="@/static/image/lacation.png" mode=""></image>
+			<image src="@/static/image/manage.png" mode=""></image>
 			<text>{{roomInfo.hotelBranch.name || '客服服务管家'}}</text>
 		</view>
-		<text class="number">房号/桌号：{{roomInfo.roomCode}}</text>
+		<text class="number">房间号：{{roomInfo.roomCode}}</text>
 	</view>
 </template>
 
@@ -12,10 +12,20 @@
 	export default {
 		data() {
 			return {
-				roomInfo: {}
+				roomInfo: {
+					hotelBranch: {
+						name: ''
+					},
+					roomCode: ''
+				}
 			}
 		},
+		onShow() {
+			
+		},
 		mounted() {
+			console.log(111)
+			console.log(uni.getStorageSync('roomInfo'))
 			this.roomInfo = uni.getStorageSync('roomInfo')
 		}
 	}
@@ -32,6 +42,8 @@
 		align-items: center;
 		font-size: 26rpx;
 		height: 80rpx;
+		border-radius: 10rpx;
+		box-shadow: 0px 2px 3px 1px rgba(0,0,0,0.1);
 	
 		.name {
 			display: flex;

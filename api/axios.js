@@ -1,4 +1,5 @@
 import {baseURL} from './baseURL.js'
+import qs from 'qs'
 console.log(baseURL)
 
 const httpRequest = (opts, data) => {
@@ -48,7 +49,14 @@ const httpTokenRequest = (opts, data) => {
 	}
 	let token = uni.getStorageSync('token')
 
+	console.log(data)
+	console.log(typeof data)
+	
 	if (token) {
+		if(opts.method == 'post') {
+			data = qs.stringify(data)
+			console.log(data)
+		}
 		let httpDefaultOpts = {
 			url: baseURL + opts.url,
 			data: data,
@@ -73,7 +81,8 @@ const httpTokenRequest = (opts, data) => {
 			uni.request(httpDefaultOpts).then(
 				(res) => {
 					console.log(res)
-					if (res[1].data && res[1].data.code == '4003') {
+					// if (res[1].data && (res[1].data.code == '4003' || res[1].data.code == 1)) {
+					if (res[1].data && (res[1].data.code == '4003' )) {
 						uni.navigateTo({
 							url: '/pages/login/login'
 						})

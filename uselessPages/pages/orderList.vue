@@ -10,10 +10,10 @@
 				<view class="oneOrder">
 					<view class="status">
 						<view class="left">
-							<image src="@/static/logo.png" mode=""></image>
+							<image src="@/static/image/order_icon.png" mode=""></image>
 							<text>{{item.hotelBranch.name || '客房助手管家'}}</text>
 						</view>
-						<view class="right" :class="[items.status != 5 ? 'active' : '']">
+						<view class="right" :class="['active' + item.status]">
 							{{item.status | statusFilter}}
 						</view>
 					</view>
@@ -23,7 +23,7 @@
 							<view class="right">{{item.orderSn}}</view>
 						</view>
 						<view class="one">
-							<view class="left">房号/桌号</view>
+							<view class="left">房间号</view>
 							<view class="right">{{item.roomInfo.roomCode}}</view>
 						</view>
 						<view class="one">
@@ -50,12 +50,17 @@
 					<view class="btn" v-if="item.status == 0 || (item.status > 0 && item.status < 4 && item.payStatus)">
 						<view v-if="item.status == 0" @click.stop="cancelOrder(item)">取消订单</view>
 						<view v-if="item.status > 0 && item.status < 4 && item.payStatus" @click.stop="confirmReceipt(item)">确认订单</view>
+						<view v-if="item.refundStatus == 0 && item.status != 5  && item.status != 0 && item.payStatus == 1 && item.payType == 1" style="margin-left: 15px;" @click.stop="showDialog(item)">退款</view>
 					</view>
 				</view>
 			</view>
-			<uni-load-more :status="status"></uni-load-more>
-			<Nothing v-if="!orderList.length" style="margin-top: 90rpx;"></Nothing>
+			<uni-load-more v-if="orderList.length || status == 'loading'" :status="status"></uni-load-more>
+			<Nothing v-if="!orderList.length" style="margin-top: 90rpx;" title="近期暂无订单"></Nothing>
 		</view>
+		<uni-popup ref="inputDialog" type="dialog">
+			<uni-popup-dialog ref="inputClose" mode="input" title="退款" v-modal="reason" before-close
+				placeholder="请输入退款说明" @confirm="applyRefund"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
@@ -92,20 +97,26 @@
 				status: 'more',
 				page: 1,
 				perPage: 10,
+				modifyInfo: {},
+				reason: '',
 			}
 		},
 		filters: {
 			statusFilter(status) {
-				if(status == 1) {
-					return '已接单'
-				} else if (status == 2) {
+				if(status == 2) {
 					return '配送中'
-				}  else if (status == 3 || status == 4) {
+				}  else if (status == 4) {
 					return '已完成'
 				} else if (status == 5) {
 					return '已取消'
-				} else{ 
+				} else if (status == 0){ 
 					return '待接单'
+				} else if (status == 1){ 
+					return '已接单'
+				}  else if (status == 3){ 
+					return '已送达'
+				} else {
+					return ''
 				}
 			}
 		},
@@ -151,7 +162,7 @@
 					status: this.active == -1 ? '' : this.active,
 					page: this.page,
 					per_page: this.perPage,
-					order_type: 'goods'
+					orderType: 'goods'
 				}).then(res => {
 					this.loading = false
 					if(res.code == 0) {
@@ -231,6 +242,44 @@
 					})
 				})
 			},
+			showDialog(item) {
+				this.modifyInfo = item
+				this.$refs.inputDialog.open()
+			},
+			applyRefund(val) {
+				console.log(val)
+				if(!val) {
+					uni.showToast({
+						title: '请填写原因',
+						icon: 'none'
+					})
+					return
+				}
+				this.$api.applyRefund({
+					orderId: this.modifyInfo.orderId,
+					orderSn: this.modifyInfo.orderSn,
+					refundReasonExplain: val
+				}).then(res => {
+					if(res.code == 0) {
+						uni.showToast({
+							icon: 'none',
+							title: '已提交申请，请稍等…'
+						})
+						this.$refs.inputDialog.close()
+						this.getOrderList('mark')
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg || '网络错误'
+						})
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg || '网络错误'
+					})
+				})
+			},
 		}
 	}
 </script>
@@ -283,14 +332,19 @@
 				padding: 0 20rpx;
 				
 				.left {
+					display: flex;
+					justify-content: space-between;
+					height: 80rpx;
+					align-items: center;
+					
 					image {
-						width: 30rpx;
-						height: 30rpx;
+						width: 48rpx;
+						height: 48rpx;
 					}
 					
 					text {
-						margin-left: 10rpx;
-						font-size: 32rpx;
+						margin-left: 4rpx;
+						font-size: 28rpx;
 					}
 				}
 				
@@ -304,6 +358,21 @@
 						background:$uni-color-primary;
 						color: #00aeef
 					}
+					
+					&.active5,&.active4 {
+						background: #E4E4E4;
+						color: #fff;
+					}
+					
+					&.active2,&.active1 {
+						background: #5BCD33;
+						color: #fff;
+					}
+					
+					&.active0 {
+						background: rgba(0,128,255,.2);
+						color: #007df8;
+					}
 				}
 			}
 			
@@ -313,13 +382,14 @@
 				
 				.one {
 					display: flex;
-					font-size: 26rpx;
+					font-size: 22rpx;
 					margin-bottom: 20rpx;
 					
 					.left {
 						width: 170rpx;
 						flex-grow: 0;
 						flex-shrink: 0;
+						padding-left: 14rpx;
 					}
 				}
 			}

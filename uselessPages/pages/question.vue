@@ -10,7 +10,7 @@
 					<uni-icons class="right" type="right" size="14"></uni-icons>
 				</view>
 			</view>
-			<view class="nothing" v-if="!list.length">
+			<view class="nothing" v-if="!lists.length">
 				<Nothing></Nothing>
 			</view>
 		</view>
@@ -51,11 +51,13 @@
 			goTo(item) {
 				console.log(item)
 				uni.navigateTo({
-					url: '/pages/mine/answer?id=' + item.articleId,
+					url: '/uselessPages/pages/answer?id=' + item.articleId,
 				})
 			},
 			QandA() {
-				this.$api.QandA().then(res => {
+				this.$api.QandA({
+					hotelBranchId: uni.getStorageSync('roomInfo').hotelBranchId,
+				}).then(res => {
 					if (res.code == 0) {
 						this.lists = res.data
 					} else {

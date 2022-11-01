@@ -14,9 +14,9 @@
 				<view class="one" v-for="(item,index) in needsList" :key="index">
 					<view class="left">{{item.name}}</view>
 					<view class="right">
-						<uni-icons type="minus" size="24" @click="minus(item)" :color="item.number == 0 ? '#999' : '#00a4ef'"></uni-icons>
+						<uni-icons type="minus" size="28" @click="minus(item)" :color="item.number == 0 ? '#999' : '#00a4ef'"></uni-icons>
 						<view>{{item.number}}</view>
-						<uni-icons type="plus" size="24" @click="plus(item)" :color="item.number == 9 ? '#999' : '#00a4ef'"></uni-icons>
+						<uni-icons type="plus" size="28" @click="plus(item)" :color="item.number == 9 ? '#999' : '#00a4ef'"></uni-icons>
 					</view>
 					<!-- <uni-number-box v-model="item.number" :min="0" :max="9"></uni-number-box> -->
 				</view>
@@ -36,6 +36,7 @@
 			return {
 				roomInfo: {},
 				needsList: [],
+				content: ''
 			}
 		},
 		components: {
@@ -77,14 +78,17 @@
 				})
 			},
 			minus(item) {
+				console.log(item)
 				if(!item.number) return
-				this.needsList.forEach(v => {
+				this.needsList.forEach((v, i) => {
 					if(v.id == item.id) {
 						v.number--
+						this.$set(this.needsList, i, v)
 					}
 				})
 			},
 			plus(item) {
+				console.log(item)
 				if(item.number == 9) return
 				this.needsList.forEach((v, i) => {
 					if(v.id == item.id) {
@@ -236,7 +240,9 @@
 	}
 
 	.submit {
-		margin: 10px 0 30px;
+		position: fixed;
+		bottom: 100rpx;
+		width: calc(100% - 60rpx);
 		background: $uni-color-primary;
 	}
 

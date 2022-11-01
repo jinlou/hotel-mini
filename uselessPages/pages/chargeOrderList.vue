@@ -1,7 +1,7 @@
 <template>
 	<view class="page">
 		<view class="top">
-			<view :class="['one', active == index ? 'active' : '' ]" v-for="(item,index) in lists" :key="index">
+			<view @click="changeType(item)" :class="['one', active == item.type ? 'active' : '' ]" v-for="(item,index) in lists" :key="index">
 				{{item.text}}
 			</view>
 		</view>
@@ -10,11 +10,11 @@
 				<view class="oneOrder">
 					<view class="status">
 						<view class="left">
-							<image src="@/static/logo.png" mode=""></image>
+							<image src="@/static/image/charge_icon.png" mode=""></image>
 							<text>{{item.hotelBranch.name || '客房助手管家'}}</text>
 						</view>
 						<view class="right" :class="[items.status != 5 ? 'active' : '']">
-							{{item.status | statusFilter}}
+							{{item | statusFilter}}
 						</view>
 					</view>
 					<view class="content">
@@ -47,14 +47,19 @@
 							<view class="right">{{item.addTime}}</view>
 						</view>
 					</view>
-					<view class="btn" v-if="item.status == 1">
-						<view @click.stop="checkExp(item)">结束充电</view>
+					<view class="btn" v-if="(item.status == 1 && item.payStatus == 1 && item.refundStatus == 0) || (item.refundStatus == 0 && item.status != 5  && item.status != 0 && item.payStatus == 1 && item.payType == 1)">
+						<view v-if="item.status == 1 && item.payStatus == 1 && item.refundStatus == 0" @click.stop="checkExp(item)">结束租借</view>
+						<view v-if="item.refundStatus == 0 && item.status != 5  && item.status != 0 && item.payStatus == 1 && item.payType == 1" style="margin-left: 15px;" @click.stop="showDialog(item)">退款</view>
 					</view>
 				</view>
 			</view>
-			<uni-load-more :status="status"></uni-load-more>
-			<Nothing v-if="!orderList.length" style="margin-top: 90rpx;"></Nothing>
+			<uni-load-more v-if="orderList.length || status == 'loading'"  :status="status"></uni-load-more>
+			<Nothing v-if="!orderList.length" style="margin-top: 90rpx;" title="近期暂无充电订单"></Nothing>
 		</view>
+		<uni-popup ref="inputDialog" type="dialog">
+			<uni-popup-dialog ref="inputClose" mode="input" title="退款" v-modal="reason" before-close
+				placeholder="请输入退款说明" @confirm="applyRefund"></uni-popup-dialog>
+		</uni-popup>
 	</view>
 </template>
 
@@ -83,14 +88,16 @@
 				status: 'more',
 				page: 1,
 				perPage: 10,
+				modifyInfo: {},
+				reason: '',
 			}
 		},
 		filters: {
-			statusFilter(status) {
-				if(status == 1) {
-					return '租借中'
-				} else{ 
+			statusFilter(item) {
+				if(item.refundStatus == 2 || item.status == 4) {
 					return '已完成'
+				} else{ 
+					return '租借中'
 				}
 			}
 		},
@@ -118,7 +125,7 @@
 					url: '/uselessPages/pages/orderDetail?orderId=' + item.orderId
 				})
 			},
-			changeStatus(item) {
+			changeType(item) {
 				this.active = item.type
 				this.page = 1
 				this.status = 'loading'
@@ -135,7 +142,7 @@
 					status: this.active == -1 ? '' : this.active,
 					page: this.page,
 					per_page: this.perPage,
-					order_type: 'charge'
+					orderType: 'charge'
 				}).then(res => {
 					this.loading = false
 					if(res.code == 0) {
@@ -168,23 +175,28 @@
 				})
 			},
 			checkExp(item) {
+				console.log(uni.getStorageSync('roomInfo'))
 				this.$api.checkExp({
 					hotelBranchId: uni.getStorageSync('roomInfo').hotelBranchId
 				}).then(res => {
 					console.log(res)
 					if(res.data.expTime * 1000 > Date.parse(new Date())) {
-						uni.showModal({
-							title: '提示',
-							content: '确定结束充电吗？',
-							success: function (res) {
-								if (res.confirm) {
-									console.log('用户点击确定');
-									this.endCharge()
-								} else if (res.cancel) {
-									console.log('用户点击取消');
-								}
-							}
-						});
+						// uni.showModal({
+						// 	title: '提示',
+						// 	content: '确定结束充电吗？',
+						// 	success: (res) => {
+						// 		if (res.confirm) {
+						// 			console.log('用户点击确定');
+						// 			this.endCharge(item)
+						// 		} else if (res.cancel) {
+						// 			console.log('用户点击取消');
+						// 		}
+						// 	}
+						// });
+						
+						uni.navigateTo({
+							url: '/pages/service/charge'
+						})
 					} else{
 						uni.showToast({
 							icon: 'none',
@@ -201,13 +213,52 @@
 			},
 			endCharge(item) {
 				this.$api.endCharge({
-					hotelBranchId: uni.getStorageSync('roomInfo').hotelBranchId
+					orderId: item.orderId,
+					orderSn: item.orderSn
 				}).then(res => {
 					if(res.code == 0) {
 						uni.showToast({
 							icon: 'none',
-							title: '已确认订单'
+							title: '操作成功'
 						})
+						this.getOrderList('mark')
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg || '网络错误'
+						})
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg || '网络错误'
+					})
+				})
+			},
+			showDialog(item) {
+				this.modifyInfo = item
+				this.$refs.inputDialog.open()
+			},
+			applyRefund(val) {
+				console.log(val)
+				if(!val) {
+					uni.showToast({
+						title: '请填写原因',
+						icon: 'none'
+					})
+					return
+				}
+				this.$api.applyRefund({
+					orderId: this.modifyInfo.orderId,
+					orderSn: this.modifyInfo.orderSn,
+					refundReasonExplain: val
+				}).then(res => {
+					if(res.code == 0) {
+						uni.showToast({
+							icon: 'none',
+							title: '已提交申请，请稍等…'
+						})
+						this.$refs.inputDialog.close()
 						this.getOrderList('mark')
 					} else {
 						uni.showToast({
@@ -245,8 +296,8 @@
 			width: 21%;
 			margin: 0 2%;
 			color: #333;
-			font-size: 26rpx;
-			background: #fff;
+			font-size: 30rpx;
+			background: #e4f3ff;
 			text-align: center;
 			height: 56rpx;
 			line-height: 56rpx;
@@ -266,6 +317,7 @@
 			background: #fff;
 			border-radius: 12rpx;
 			margin-bottom: 16rpx;
+			box-shadow: 0px 3px 3px 1px rgba(0,0,0,0.05);
 			
 			.status {
 				display: flex;
@@ -275,14 +327,18 @@
 				padding: 0 20rpx;
 				
 				.left {
+					display: flex;
+					justify-content: space-between;
+					height: 80rpx;
+					align-items: center;
 					image {
-						width: 30rpx;
-						height: 30rpx;
+						width: 48rpx;
+						height: 48rpx;
 					}
 					
 					text {
-						margin-left: 10rpx;
-						font-size: 32rpx;
+						margin-left: 4rpx;
+						font-size: 28rpx;
 					}
 				}
 				
@@ -293,8 +349,8 @@
 					padding: 6rpx 16rpx;
 					
 					&.active {
-						background:$uni-color-primary;
-						color: #fff;
+						background: rgba(0,128,255,.2);
+						color: #007df8;
 					}
 				}
 			}
@@ -305,13 +361,14 @@
 				
 				.one {
 					display: flex;
-					font-size: 26rpx;
+					font-size: 22rpx;
 					margin-bottom: 20rpx;
 					
 					.left {
 						width: 170rpx;
 						flex-grow: 0;
 						flex-shrink: 0;
+						padding-left: 14rpx;
 					}
 				}
 			}
